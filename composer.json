@@ -1,0 +1,19 @@
+{
+    "name": "pc-programador1/app-salon_php_mvc_js_sass",
+    "description": "Proyecto AppSalon",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "MVC\\": "./",
+            "Controllers\\" : "./controllers",
+            "Model\\" : "./models"
+        }
+    },
+    "authors": [
+        {
+            "name": "PotterFH",
+            "email": "ivan_2333@outlook.com"
+        }
+    ],
+    "require": {}
+}
