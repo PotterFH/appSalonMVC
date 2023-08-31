@@ -2,6 +2,8 @@
 
 namespace Controllers;
 
+use Classes\Email;
+use Model\Usuario;
 use MVC\Router;
 
 class LoginController
@@ -20,7 +22,7 @@ class LoginController
     {
         $router->render('auth/olvide-password', []);
     }
-    
+
 
     public static function recuperar()
     {
@@ -29,6 +31,41 @@ class LoginController
 
     public static function crear(Router $router)
     {
-        $router->render('auth/crear-cuenta', []);
+        $usuario = new Usuario;
+
+        // Alertas Vacias
+        $alertas = [];
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $usuario->sincronizar($_POST);
+            $alertas = $usuario->validarNuevaCuenta();
+
+            //Revisar que no  haya alertas, es decir que lleno todos lo campos
+            if (empty($alertas)) {
+                //Verificar que no exista el usuario
+                // $usuario->existeUsuario();
+                $resultado = $usuario->existeUsuario();
+
+                if($resultado->num_rows){
+                    $alertas = Usuario::getAlertas();
+                }else{
+                    //Hashear password
+                    $usuario->hasPassword();
+                    
+                    //Enviar token
+                    $usuario->crearToken();
+
+                    //Enviar el email para validar token
+                    $email = new Email($usuario->email, $usuario->nombre, $usuario->token);
+
+                    debuguear($email);
+                }
+            }
+        }
+
+        $router->render('auth/crear-cuenta', [
+            'usuario' => $usuario,
+            'alertas' => $alertas
+        ]);
     }
 }
