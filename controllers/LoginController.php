@@ -10,7 +10,42 @@ class LoginController
 {
     public static function login(Router $router)
     {
-        $router->render('auth/login');
+        $alertas = [];
+
+        if($_SERVER['REQUEST_METHOD'] === 'POST'){
+            $auth = new Usuario($_POST);
+
+            $alertas = $auth->validarLogin();
+            // debuguear($auth);
+
+            if(empty($alertas)){
+                // echo "Usuario agrego tanto email como password";
+
+                //comprobar que el usuario exista
+                $usuario = Usuario::where('email', $auth->email);
+
+                if($usuario) {
+                    //verificar el password
+                    if($usuario->comprobarPasswordAndVerificado($auth->password)){
+                        // Autenticar el usuario
+                        session_start();
+
+                        $_SESSION['id'] = $usuario->id;
+
+                        debuguear($_SESSION);
+                    }
+                }else{
+                    Usuario::setAlerta('error', 'Usuario no encontrado');
+                }
+
+                // debuguear($usuario);
+            }
+        }       
+        $alertas = Usuario::getAlertas();
+
+        $router->render('auth/login', [
+            'alertas' => $alertas
+        ]);
     }
 
     public static function logout()
