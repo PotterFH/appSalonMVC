@@ -20,6 +20,10 @@ function iniciarApp() {
     paginaSiguiente()
     paginaAnterior()
     consultarAPI() //Consulta la API en el backend de PHP
+    nombreCliente() //Añade el nombre del cliente al objeto de cita
+    seleccionarFecha(); //Añade la fecha al objeto de cita
+    seleccionarHora(); //Añade la hora al objeto de cita
+    mostrarResumen(); //Muestra el resumen de la cita
 }
 
 function mostrarSeccion() {
@@ -68,6 +72,7 @@ function botonesPaginador() {
     } else if (paso == 3) {
         anterior.classList.remove('ocultar')
         siguiente.classList.add('ocultar')
+        mostrarResumen();
     } else {
         siguiente.classList.remove('ocultar')
         anterior.classList.remove('ocultar')
@@ -105,7 +110,7 @@ async function consultarAPI() {
     }
 }
 
-function mostrarServicios(servicios){
+function mostrarServicios(servicios) {
     servicios.forEach(servicio => {
         const { id, nombre, precio } = servicio;
 
@@ -134,12 +139,96 @@ function mostrarServicios(servicios){
 
 }
 
-function seleccionarServicio(servicio){
+function seleccionarServicio(servicio) {
     const { id } = servicio;
     const { servicios } = cita; //Extraer el arreglo de servicio
-    cita.servicios = [...servicios, servicio]; //Tomar una copia del arreglo de servicios y agrega los que da click
-
+    //Identificar el elemento al que se le da click
     const divServicio = document.querySelector(`[data-id-servicio="${id}"]`);
-    divServicio.classList.add('seleccionado')
-    console.log(servicio)
+
+    //Comprobar si un servicio ya fue agregado
+    //el metodos some itera sobre todo el array y retorna true o false si el elemento ya existe
+    if (servicios.some(agregado => agregado.id === id)) {
+        //Eliminarlo
+        cita.servicios = servicios.filter(agregado => agregado.id !== id)
+        divServicio.classList.remove('seleccionado')
+    } else {
+        //Agregarlo
+        cita.servicios = [...servicios, servicio]; //Tomar una copia del arreglo de servicios y agrega los que da click
+        divServicio.classList.add('seleccionado')
+    }
+
+    console.log(cita)
+}
+
+function nombreCliente(){
+    const nombre = document.querySelector('#nombre').value;
+    cita.nombre  = nombre;
+}
+
+function seleccionarFecha(){
+    const inputFecha = document.querySelector('#fecha');
+    inputFecha.addEventListener('input', function(e) {
+
+        const dia = new Date(e.target.value).getUTCDay();
+
+        if ( [6,0].includes(dia)) {
+            e.target.value = '';
+           mostrarAlerta('Fines de semana no permitidos', 'error', '.formulario')
+        }else{
+            cita.fecha = e.target.value;
+        }
+    })
+}
+
+function seleccionarHora(){
+    const inputHora =  document.querySelector('#hora')
+    inputHora.addEventListener('input', function(e) {
+        const horaCita = e.target.value;
+        const hora = horaCita.split(':')[0];
+        if(hora < 10 || hora > 18){
+            e.target.value = ''
+            mostrarAlerta('Hora no valida', 'error', '.formulario')
+        }else{
+            cita.hora = e.target.value
+        }
+    })
+}
+
+function mostrarAlerta(mensaje, tipo, elemento, desaparece = true){
+
+    //Evitar mostrar multiples alertas
+    const alertaPrevia = document.querySelector('.alerta');
+    if(alertaPrevia){
+        alertaPrevia.remove();
+    }
+
+    //Crear alerta
+    const alerta =  document.createElement('DIV');
+    alerta.textContent = mensaje;
+    alerta.classList.add('alerta');
+    alerta.classList.add(tipo);
+
+    //Insertar alerta
+    // const formulario = document.querySelector('#paso-2 p')
+    const referencia = document.querySelector(elemento)
+    referencia.appendChild(alerta);
+    
+    if(desaparece){
+        //Eliminar alerta despues de 3segundos
+    setTimeout(() => {
+        alerta.remove();
+    }, 3000);
+    }
+    
+}
+
+function mostrarResumen() {
+    const resumen = document.querySelector('.contenido-resumen');
+
+    if (Object.values(cita).includes('') || cita.servicios.length == 0) {
+        console.log('Hacen falta datos')
+        mostrarAlerta('Faltan datos de servicios', 'error', '.contenido-resumen', false)
+    }else{
+        console.log('todo bien')
+    }
 }
