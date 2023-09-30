@@ -13,6 +13,7 @@
         background-image: url(../img/1.jpg);
         background-size: cover;
         background-position: center center;
+
         @include m.tablet {
             height: auto;
         }
@@ -23,4 +24,20 @@
         margin: 0 auto;
         padding: 3rem 0;
     }
+}
+
+.barra {
+    margin: v.$separacion;
+
+    @include m.tablet{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .boton{
+        @include m.boton(v.$rojo, v.$blanco);
+        margin: 0;
+    }
+
 }

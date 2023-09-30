@@ -1,6 +1,10 @@
 <h1 class="nombre-pagina">Crear Nueva Pagina</h1>
 <p class="descripcion-pagina"> Elige tus servicios y coloca tus datos</p>
 
+<div class="barra">
+    <p> ¡HOLA <?php echo $nombre ?? '' ?>!</p>
+    <a class="boton" href="/logout" class="boton"> Cerrar Sesion</a>
+</div>
 
 <div id="app">
     <nav class="tabs">

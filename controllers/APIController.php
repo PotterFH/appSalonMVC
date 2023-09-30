@@ -10,7 +10,7 @@ class APIController
 {
     public static function index()
     {
-        $servicios = servicio::all();
+        $servicios = Servicio::all();
         echo json_encode($servicios);   
     }
 
@@ -36,10 +36,8 @@ class APIController
             $citaServicio = new CitaServicio($args);
             $citaServicio-> guardar();
         }
+        
         //Retornamos una respuesta
-        $respuesta = [
-            'resultado' => $resultado
-        ];
-        echo json_encode($respuesta);
+        echo json_encode(  ['resultado' => $resultado] );
     }
 }

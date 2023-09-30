@@ -144,7 +144,7 @@ class ActiveRecord {
         $query .= " ') ";
 
         //Debuguear los llamado Fetch
-        return json_encode(['query' => $query]);
+        // return json_encode(['query' => $query]);
 
         // Resultado de la consulta
         $resultado = self::$db->query($query);

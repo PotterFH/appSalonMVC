@@ -316,7 +316,7 @@ async function reservarCita() {
     datos.append('hora', hora);
     datos.append('usuarioId', id);
     datos.append('servicios', idServicio);
-    // console.log([...datos])
+    console.log([...datos])
 
     try {
         //Peticion hacia la api
